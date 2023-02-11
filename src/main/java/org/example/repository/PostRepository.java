@@ -2,45 +2,61 @@ package org.example.repository;
 
 import org.example.model.Post;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+
 
 // Stub
 public class PostRepository {
 
     private static PostRepository instance;
-    private static List<Post> list;
+    private static Map<Long, Post> map;
+    private static AtomicLong counterId; //счетчик постов
+
 
     private PostRepository() {
-        list = new CopyOnWriteArrayList<Post>();
+        map = new ConcurrentHashMap<>();
+        counterId = new AtomicLong(0);
     }
 
     public List<Post> all() {
-        return this.list;
+        return map.values().stream().toList();
     }
 
 
     public Optional<Post> getById(long id) {
-        for(int i = 0; i < list.size(); i++){
-            if(this.list.get(i).getId() == id){
-                return Optional.ofNullable(list.get(i));
-            }
+        if(this.map.containsKey(id)){
+            return Optional.ofNullable(map.get(id));
         }
         return Optional.empty();
     }
 
 
     public Post save(Post post) {
-        this.list.add(post);
+        if(post.getId() == 0){ //если id = 0, то регистрируем новый пост
+            counterId.addAndGet(1);
+            post.setId(counterId.get());
+            map.put(counterId.get(),post);
+        }
+        else { //если id не равно 0, то проверяем наличие поста с таким номером
+            if(this.getById(post.getId()).isPresent()){ //если пост обнаружен, то меняем содержимое содержания
+                this.getById(post.getId()).get().setContent(post.getContent());
+            }
+            else{ //если не существует поста, то пишем как новый
+                counterId.addAndGet(1);
+                post.setId(counterId.get());
+                map.put(counterId.get(), post);
+            }
+        }
         return post;
     }
 
 
     public void removeById(long id) {
-        Optional<Post> optionalPost = this.getById(id);
-        if(optionalPost.isPresent()){
-            list.remove(optionalPost.get());
+        if(this.map.containsKey(id)){
+            this.map.remove(id);
         }
     }
 
