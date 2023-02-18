@@ -10,9 +10,7 @@ import org.springframework.context.annotation.Configuration;
 public class JavaConfig {
 
     @Bean
-    public PostRepository postRepository() {
-        return PostRepository.getInstance();
-    }
+    public PostRepository postRepository() { return new PostRepository(); }
 
     @Bean
     public PostService postService(PostRepository repository) {
