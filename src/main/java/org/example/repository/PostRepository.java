@@ -11,18 +11,18 @@ import java.util.stream.Collectors;
 // Stub
 public class PostRepository {
 
-    private static PostRepository instance;
+    //private static PostRepository instance;
     private static Map<Long, Post> map;
     private static AtomicLong counterId; //счетчик постов
 
 
-    private PostRepository() {
+    public PostRepository() {
         map = new ConcurrentHashMap<>();
         counterId = new AtomicLong(0);
     }
 
     public List<Post> all() {
-        return map.values().stream().toList();
+        return map.values().stream().collect(Collectors.toList());
     }
 
 
@@ -61,10 +61,10 @@ public class PostRepository {
     }
 
 
-    public static PostRepository getInstance() {
+    /*public static PostRepository getInstance() {
         if (instance == null) {
             instance = new PostRepository();
         }
         return instance;
-    }
+    }*/
 }
