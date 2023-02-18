@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Repository
 public class PostRepository {
 
-    private static PostRepository instance;
+    //private static PostRepository instance;
     private static Map<Long, Post> map;
     private static AtomicLong counterId; //счетчик постов
 
