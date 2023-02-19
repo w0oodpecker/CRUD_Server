@@ -22,7 +22,7 @@ public class PostRepository {
     }
 
     public List<Post> all() {
-        return map.values().stream().toList();
+        return map.values().stream().collect(Collectors.toList());
     }
 
 
